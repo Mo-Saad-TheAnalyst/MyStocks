@@ -3,7 +3,7 @@ import json
 import random
 import boto3
 
-STREAM_NAME = "ExampleInputStream"
+STREAM_NAME = "test_tiker_data"
 
 
 def get_data():
