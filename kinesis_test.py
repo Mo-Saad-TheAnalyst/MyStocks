@@ -18,10 +18,10 @@ def generate(stream_name, kinesis_client):
         data = get_data()
         print(data)
         kinesis_client.put_record(
-            StreamName=stream_name,
-            Data=json.dumps(data),
-            PartitionKey="partitionkey")
+            DeliveryStreamName=stream_name,
+            Record=json.dumps(data)
+            )
 
 
 if __name__ == '__main__':
-    generate(STREAM_NAME, boto3.client('kinesis'))
+    generate(STREAM_NAME, boto3.client('firehose'))
