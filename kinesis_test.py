@@ -2,6 +2,7 @@ import datetime
 import json
 import random
 import boto3
+import time
 
 STREAM_NAME = "test_tiker_data"
 
@@ -15,6 +16,7 @@ def get_data():
 
 def generate(stream_name, kinesis_client):
     while True:
+        time.sleep(1)
         data = get_data()
         print(data)
         kinesis_client.put_record(
