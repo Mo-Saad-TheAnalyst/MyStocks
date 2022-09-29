@@ -19,7 +19,7 @@ def generate(stream_name, kinesis_client):
         print(data)
         kinesis_client.put_record(
             DeliveryStreamName=stream_name,
-            Record=json.dumps(data)
+            Record= {'Data': json.dumps(data)}
             )
 
 
