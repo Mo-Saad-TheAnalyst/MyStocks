@@ -1,0 +1,12 @@
+[submodule "lambda_transform_load"]
+	path = lambda_transform_load
+	url = https://github.com/Mo-Saad-TheAnalyst/lambda_transform_load.git
+[submodule "lambda-notification-alert"]
+	path = lambda-notification-alert
+	url = https://github.com/Mo-Saad-TheAnalyst/lambda-notification-alert.git
+[submodule "stock-realtime-scraping"]
+	path = stock-realtime-scraping
+	url = https://github.com/Mo-Saad-TheAnalyst/stock-realtime-scraping.git
+[submodule "kinesis-influx-lambda"]
+	path = kinesis-influx-lambda
+	url = https://github.com/Mo-Saad-TheAnalyst/kinesis-influx-lambda.git
