@@ -10,7 +10,7 @@
    python.
  - The records are transformed with a lambda function to insure data
    integrity and also delivers the data to a time series database.
- - A firehouse stream is configured to patch the data for a maximum of 1
+ - A firehose stream is configured to patch the data for a maximum of 1
    min and sends the raw untransformed data to an s3 bucket.
  - A transformer lambda is then triggered to transform the data from
    JSON to parquet and provide dynamic partitioning and once again
@@ -53,7 +53,7 @@ Grafana is being used as the tool for monitoring and visualizing the stocks data
 
 # Batch processing
 
- - A firehouse stream acts as a buffer for kinesis Datastream while
+ - A firehose stream acts as a buffer for kinesis Datastream while
    dynamically partitioning the data by the date and the stock name.
  - A lambda is being triggered each time an object is put to the raw
    bucket which in return converts the file type from JSON to parquet
