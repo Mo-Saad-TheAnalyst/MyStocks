@@ -1,9 +1,10 @@
 # MyStockTracker
 
+![Arch Diagram](sources/Stocks_Diagram12-10.jpg)
 
 # Overview
 
- - An ec2 instance is configured to scrape some stocks in realtime in an
+ - An EC2 instance is configured to scrape some stocks in realtime in an
    async fashion.
  - The data is then send to kinesis Datastream using aws  sdk for
    python.
@@ -47,7 +48,7 @@ The reasonable choice for the database was a timeseris database due to the natur
 The data is loaded to influxdb with the same **Transformation lambda** as it acts as the transformer and the loader.
 
 # Realtime visualizations
-
+![Grafana](sources/stock-grafana.gif)
 Grafana is being used as the tool for monitoring and visualizing the stocks data due to the many capabilities it provides and it also has alerting service in real-time.
 
 # Batch processing
