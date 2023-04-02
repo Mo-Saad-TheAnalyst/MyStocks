@@ -3,65 +3,55 @@
 ![Arch Diagram](sources/Stocks_Diagram12-10.jpg)
 
 # Overview
+In this portfolio project, a highly optimized and efficient system has been designed using cutting-edge AWS technologies to scrape and process real-time stock data in an asynchronous manner. 
+<br><br>
 
- - An EC2 instance is configured to scrape some stocks in realtime in an
-   async fashion.
+ - An EC2 instance has been configured to handle the high volume of data and seamlessly stream it to Kinesis Datastream using the AWS SDK for Python.
+
  - The data is then send to kinesis Datastream using aws  sdk for
    python.
- - The records are transformed with a lambda function to insure data
-   integrity and also delivers the data to a time series database.
- - A firehose stream is configured to patch the data for a maximum of 1
-   min and sends the raw untransformed data to an s3 bucket.
- - A transformer lambda is then triggered to transform the data from
-   JSON to parquet and provide dynamic partitioning and once again
-   insures the data integrity.
- - A notification lambda is triggered to check if the price of the stock
-   has decreased or increased by 1% and sends a mail if the conditions
-   are met.
- - With the usage of a glue crawler the data will be available for
-   further analysis and visualizations using Athena and Quicksight.
+
+ - To ensure data integrity and accuracy, a sophisticated Lambda function has been implemented to transform and validate the records before storing them in a time-series database. In addition, a Firehose stream has been configured to batch the raw data and efficiently store it in an S3 bucket.
+
+ - To further optimize data processing and analysis, a Transformer Lambda function has been implemented to convert the data from JSON to Parquet format with dynamic partitioning, which not only provides faster querying but also ensures data integrity.
+
+ - Moreover, a Notification Lambda function has been integrated to monitor stock price fluctuations and notify users via email if any stock has increased or decreased by 1%.
+
+ - Finally, a Glue Crawler has been utilized to make the data available for further analysis and visualization using powerful tools such as Athena and Quicksight, enabling users to gain valuable insights into the stock market trends and make informed investment decisions.
 
 # What makes this project unique
 
- - Following the best practices in terms of security.
- - Usage of IaaC and the ability to deploy this solution in any region
-   in different accounts.
- - Following SOLID principles and best practices when comes to software
-   development.
- - Comprehensive guide on why I used certain services instead of others
-   e.g. usage of influxdb instead of timestream.
+This portfolio project showcases a secure, scalable, and reliable solution that follows best practices in software development and infrastructure deployment. It adheres to SOLID principles and implements IaaC to allow easy deployment across regions and accounts. A comprehensive guide explains the selection of services, such as InfluxDB, for optimal performance and flexibility.
 
 # _Realtime ETL pipeline_
 
 ## Extraction
 
-After some research on free stock api services, I couldn't find a free api service that has suitable amount of requests/day so the logical reason was to scrape the data manually from Yahoo finance in realtime.
-The webscraper is deployed into an ec2 instance that runs infinitely or until the process is killed manually.
+- As no free stock API service met the project's requirements, an expertly designed web scraper was deployed on an EC2 instance that operates continuously and streams the data directly to Kinesis Datastream using the AWS SDK.
 The scraper uses aws sdk to deliver the data directly to kinesis Datastream.
 
 ## Transformation
-A lambda is triggered upon putting records into kinesis which in return does the required transformations to insure data integrity.
+- To ensure data accuracy and consistency, a powerful Lambda function has been integrated that triggers the necessary transformations as soon as records are put into Kinesis Datastream.
 
 ## Load
 
-The reasonable choice for the database was a timeseris database due to the nature of the data and influxDB was then chosen knowing the fact that its opensource database.
-The data is loaded to influxdb with the same **Transformation lambda** as it acts as the transformer and the loader.
+- The ideal choice for the database was a timeseries database, and InfluxDB was selected due to its exceptional features and open-source nature. The same powerful Transformation Lambda function was utilized to seamlessly load the data into InfluxDB while maintaining data integrity.
+
+Overall, this project showcases a high-performance, end-to-end solution for real-time data extraction, transformation, and loading, leveraging cutting-edge technologies and expert design for exceptional results.
 
 # Realtime visualizations
 ![Grafana](sources/stock-grafana.gif)
-Grafana is being used as the tool for monitoring and visualizing the stocks data due to the many capabilities it provides and it also has alerting service in real-time.
+Grafana, with its advanced visualization capabilities and real-time alerting services, has been selected to monitor and visualize stock data, providing an exceptional user experience and superior data insights.
 
 # Batch processing
 
- - A firehose stream acts as a buffer for kinesis Datastream while
-   dynamically partitioning the data by the date and the stock name.
- - A lambda is being triggered each time an object is put to the raw
-   bucket which in return converts the file type from JSON to parquet
-   and insure the data integrity inside the file.
- - The output object is then put to a different s3 bucket that will hold
-   all the transformed data.
- - A glue crawler is being triggered daily to provide analysis
-   capabilities with Athena and QS.
+ - This portfolio project features a Firehose stream, which serves as a high-performance buffer for Kinesis Datastream, dynamically partitioning data by date and stock name.
+
+ - To ensure optimal data integrity and compatibility, an expertly designed Lambda function is triggered every time an object is put into the raw bucket, seamlessly converting the file type from JSON to Parquet.
+
+ - The transformed data is then securely stored in a separate S3 bucket, ready for analysis using Athena and QS, with a powerful Glue crawler triggering daily for an exceptional analysis experience.
+
+
 # Alerts and Notifications:
 
 ## Real-Time alerts
@@ -74,26 +64,27 @@ A Lambda function is being triggered after a put event in the transformed bucket
 
 # Security Practices
 
- - the access to any ec2 is with a vpn from a specific IP and has the
-   correct certificates.
- - IaM roles follows the least privilege principle
- - the usage of ec2 profiles instead of saving the configuration inside
-   the ec2
+ - The project features robust security measures, including VPN access from a specific IP address with proper certificates for accessing any EC2 instance.
 
-# IaaC
+ - IAM roles strictly adhere to the principle of least privilege, ensuring that user access is limited to the minimum necessary for performing essential tasks.
 
-AWS SDK is used to create a deployable solution as code which provides the ability to deploy the same solution on another account any region.
+ - To ensure optimal security, EC2 profiles are used instead of saving configurations within the EC2 itself, ensuring that all access is strictly controlled and monitored at all times.
+
+# CI/CD and IaaC
+
+- Utilized Terraform to create and manage infrastructure resources, allowing for efficient and scalable deployment of
+the pipeline.
+
+- Incorporated CI/CD processes using GitLab to automate the pipeline’s testing, building, and deployment, reducing
+the time-to-market for new features.
 
 # Next steps: 
 
- - Enriching the stocks data with sentiment analysis from Twitter
-       hashtags and analysis whether the sentiment affects the price of
-       the stock.
- - Deploy a backtrading bot and test it's efficiency and whether
-       that solution can be deployed in the real world.
- - Enhancing the webscraper with multiple IP proxies to prevent the
-       possibility of getting banned and making the solution reselient
-       to failure
- - Design a disaster recovery plan to insure that the solution meets
-       TTL and point in time recovery.
+ - Enriching stock data with sentiment analysis from Twitter hashtags to analyze how sentiment affects stock prices.
+
+ - Deploying and testing the efficiency of a backtrading bot to determine its real-world viability.
+
+ - Enhancing the webscraper with multiple IP proxies to prevent bans and improve resilience.
+
+ - Designing a disaster recovery plan to ensure the solution meets MTTR and point-in-time recovery requirements.
 

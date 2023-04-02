@@ -1,1 +1,5 @@
 *.Identifier
+*.tfstate
+*.tfstate.backup
+*.lock.hcl
+*.terraform

@@ -1,0 +1,109 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_PIPELINE_SOURCE != "merge_request_event"      
+      when: never
+    - when: always
+
+variables:
+  DEPLOYMENT_SERVER_HOST: $CD_SERVER_HOST
+
+stages:
+  - test
+  - build
+  - deploy
+
+.pytest:
+  stage: test
+  tags:
+    - ec2
+    - remote
+    - docker
+  
+  image: python:3.10-alpine
+  
+  variables:
+    MICRO_SERVICE: ""
+    SERVICE_VERSION: ""
+
+  script:
+    - cd $MICRO_SERVICE
+    - pip install -r src/requirements.txt
+    - pip install pytest
+    - pytest tests/
+
+.build:
+  stage: build
+  tags:
+    - ec2
+    - remote
+    - shell
+  variables:
+    MICRO_SERVICE: ""
+    SERVICE_VERSION: ""
+  before_script:
+    - cd $MICRO_SERVICE
+    - export IMAGE_NAME=$CI_REGISTRY_IMAGE/microservice/$MICRO_SERVICE
+    - export IMAGE_TAG=$SERVICE_VERSION
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+
+.deploy:
+  stage: deploy
+  tags:
+    - ec2
+    - remote
+    - shell
+  variables: 
+    MICRO_SERVICE: ""
+    SERVICE_VERSION: ""
+  before_script:
+    - chmod 400 $SSH_PRIVATE_KEY
+    - export IMAGE_NAME=$CI_REGISTRY_IMAGE/microservice/$MICRO_SERVICE
+    - export IMAGE_TAG=$SERVICE_VERSION
+  script:
+    - scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ./docker-compose.yaml ubuntu@$DEPLOYMENT_SERVER_HOST:/home/ubuntu
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ubuntu@$DEPLOYMENT_SERVER_HOST "
+      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+
+      export COMPOSE_PROJECT_NAME=$MICRO_SERVICE &&
+      export DC_IMAGE_NAME=$IMAGE_NAME &&
+      export DC_IMAGE_TAG=$IMAGE_TAG &&
+
+
+      docker network create micro_service || true &&
+
+      docker-compose down &&
+      docker-compose up -d"
+  environment:
+    name: development
+
+test_stock_crawler:
+  extends: .pytest
+  variables:
+    MICRO_SERVICE: stock-realtime-scraping
+    SERVICE_VERSION: "1.3"
+  only:
+    changes:
+      - "stock-realtime-scraping/**/*"
+
+build_stock_crawler:
+  extends: .build
+  variables:
+    MICRO_SERVICE: stock-realtime-scraping
+    SERVICE_VERSION: "1.3"
+  only:
+    changes:
+      - "stock-realtime-scraping/**/*"
+
+
+deploy_stock_crawler:
+  extends: .deploy
+  variables:
+    MICRO_SERVICE: stock-realtime-scraping
+    SERVICE_VERSION: "1.3"
+  only:
+    changes:
+      - "stock-realtime-scraping/**/*"
