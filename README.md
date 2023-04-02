@@ -73,12 +73,14 @@ A Lambda function is being triggered after a put event in the transformed bucket
 # CI/CD and IaaC
 
 - Utilized Terraform to create and manage infrastructure resources, allowing for efficient and scalable deployment of
-the pipeline.
+the pipeline **-Implementing the ingestion pipeline-**.
 
 - Incorporated CI/CD processes using GitLab to automate the pipeline’s testing, building, and deployment, reducing
-the time-to-market for new features.
+the time-to-market for new features **-Implemented for the scraper-**.
 
 # Next steps: 
+
+  - Complete the remainder of the infrastructure as code to ensure a production-ready pipeline that guarantees maximum uptime and minimal downtime.
 
  - Enriching stock data with sentiment analysis from Twitter hashtags to analyze how sentiment affects stock prices.
 
